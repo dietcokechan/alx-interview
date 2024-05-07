@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ Minimum Operations """
 
+
 def minOperations(n):
     """ Method that calculates the fewest number of operations needed """
     if n <= 1:

@@ -1,68 +1,57 @@
 #!/usr/bin/python3
+""" nqueens problem """
 import sys
 
 
-def printBoard(board):
-    if any(1 in x for x in board):
-        print([[idx, board[idx].index(1)] for idx, val in enumerate(board)])
-
-
-def isSafe(row, square, chess_board, N, diagonal):
-    if chess_board[row][square]:
-        return False
-    if square - diagonal >= 0 and chess_board[row][square - diagonal]:
-        return False
-    if square + diagonal < (N) and chess_board[row][square + diagonal]:
-        return False
-    if row == 0:
-        return True
-    return isSafe(row - 1, square, chess_board, N, diagonal + 1)
-
-
-def placeSquare(row, position, chess_board, N):
-    for square in range(position, N):
-        if 1 in chess_board[row]:
-            return 0
-        if not isSafe(row - 1, square, chess_board, N, 1):
-            continue
-        chess_board[row][square] = 1
+def backtrack(r, n, cols, pos, neg, board):
+    """ backtrack function to find solution """
+    if r == n:
+        res = []
+        for l in range(len(board)):
+            for k in range(len(board[l])):
+                if board[l][k] == 1:
+                    res.append([l, k])
+        print(res)
         return
-    return 1
+
+    for c in range(n):
+        if c in cols or (r + c) in pos or (r - c) in neg:
+            continue
+
+        cols.add(c)
+        pos.add(r + c)
+        neg.add(r - c)
+        board[r][c] = 1
+
+        backtrack(r+1, n, cols, pos, neg, board)
+
+        cols.remove(c)
+        pos.remove(r + c)
+        neg.remove(r - c)
+        board[r][c] = 0
 
 
-if len(sys.argv) != 2:
-    print("Usage: nqueens N")
-    sys.exit(1)
+def nqueens(n):
+    """ Solution to nqueens problem """
+    cols = set()
+    pos_diag = set()
+    neg_diag = set()
+    board = [[0] * n for i in range(n)]
 
-N = sys.argv[1]
+    backtrack(0, n, cols, pos_diag, neg_diag, board)
 
-if not str.isdigit(N):
-    print("N must be a number")
-    sys.exit(1)
 
-N = int(N)
-
-if N < 4:
-    print("N must be at least 4")
-    sys.exit(1)
-
-queen = 0
-
-while queen != N:
-    chess_board = [[0 for x in range(N)] for x in range(N)]
-    chess_board[0][queen] = 1
-    position = 0
-    row = 1
-    while row < N:
-        if placeSquare(row, position, chess_board, N):
-            row -= 1
-            position = chess_board[row].index(1)
-            chess_board[row][position] = 0
-            position += 1
-            if not row:
-                break
-        else:
-            row += 1
-            position = 0
-    printBoard(chess_board)
-    queen += 1
+if __name__ == "__main__":
+    n = sys.argv
+    if len(n) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
+    try:
+        nn = int(n[1])
+        if nn < 4:
+            print("N must be at least 4")
+            sys.exit(1)
+        nqueens(nn)
+    except ValueError:
+        print("N must be a number")
+        sys.exit(1)

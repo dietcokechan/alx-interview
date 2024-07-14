@@ -10,14 +10,14 @@ def isWinner(x, nums):
         return None
     if x != len(nums):
         return None
-    
+
     ben = 0
     maria = 0
-    
+
     a = [1 for x in range(sorted(nums)[-1] + 1)]
-    
+
     a[0], a[1] = 0, 0
-    
+
     for i in range(2, len(a)):
         rm_multiples(a, i)
     for i in nums:
@@ -25,6 +25,7 @@ def isWinner(x, nums):
             ben += 1
         else:
             maria += 1
+
     if ben > maria:
         return "Ben"
     if maria > ben:

@@ -1,57 +1,44 @@
 #!/usr/bin/python3
-""" module defining isWinner function """
+"""Module for Prime Game"""
 
 
 def isWinner(x, nums):
-    """ function to get who has won in prime game """
-    mariaWinsCount = 0
-    benWinsCount = 0
-
-    for num in nums:
-        roundSet = list(range(1, num + 1))
-        primeSet = primes_in_range(1, num)
-
-        if not primeSet:
-            benWinsCount += 1
-            continue
-
-        isMariaTurn = True
-
-        while (True):
-            if not primeSet:
-                if isMariaTurn:
-                    benWinsCount += 1
-                else:
-                    mariaWinsCount += 1
-                break
-
-            minPrime = primeSet.pop(0)
-            roundSet.remove(minPrime)
-
-            roundSet = [x for x in roundSet if x % minPrime != 0]
-
-            isMariaTurn = not isMariaTurn
-
-    if mariaWinsCount > benWinsCount:
-        return "Winner: Maria"
-
-    if mariaWinsCount < benWinsCount:
-        return "Winner: Ben"
-
+    """
+    Determines the winner of a set of prime number removal games.
+    """
+    if x <= 0 or nums is None:
+        return None
+    if x != len(nums):
+        return None
+    
+    ben = 0
+    maria = 0
+    
+    a = [1 for x in range(sorted(nums)[-1] + 1)]
+    
+    a[0], a[1] = 0, 0
+    
+    for i in range(2, len(a)):
+        rm_multiples(a, i)
+    for i in nums:
+        if sum(a[0:i + 1]) % 2 == 0:
+            ben += 1
+        else:
+            maria += 1
+    if ben > maria:
+        return "Ben"
+    if maria > ben:
+        return "Maria"
     return None
 
 
-def is_prime(n):
-    """ returns true if n is prime, else false """
-    if n < 2:
-        return False
-    for i in range(2, int(n ** 0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
-
-
-def primes_in_range(start, end):
-    """ returns a list of prime numbers between start and end (inclusive) """
-    primes = [n for n in range(start, end+1) if is_prime(n)]
-    return primes
+def rm_multiples(ls, x):
+    """
+    Removes multiples of a prime number from an array of possible prime
+    numbers.
+    """
+    for i in range(2, len(ls)):
+        try:
+            ls[i * x] = 0
+        except (ValueError, IndexError):
+            break
